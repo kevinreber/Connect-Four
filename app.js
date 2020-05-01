@@ -11,19 +11,18 @@ const HEIGHT = 6;
 let currPlayer = 1; // active player: 1 or 2
 const board = []; // array of rows, each row is array of cells  (board[y][x])
 
-/** makeBoard: create in-JS board structure:
+/** gameBoard: create in-JS board structure:
  *    board = array of rows, each row is array of cells  (board[y][x])
  */
 
-function makeBoard() {
-  // TODO: set "board" to empty HEIGHT x WIDTH matrix array
-  for (let i = 0; i < HEIGHT; i++) {  //Build row for each width
-    board.push(buildWidth());
+function gameBoard() {
+  for (let i = 0; i < HEIGHT; i++) { //Build row for each width
+    board.push(boardWidth());
   }
 }
 
 //Builds WIDTH of gameboard
-function buildWidth() {
+function boardWidth() {
   const row = []
   for (let i = 0; i < WIDTH; i++) {
     row.push(null);
@@ -31,14 +30,23 @@ function buildWidth() {
   return row;
 }
 
-/** makeHtmlBoard: make HTML table and row of column tops. */
+/** renderGameBoard: make HTML table and row of column tops. */
 
-function makeHtmlBoard() {
-  // TODO: get "htmlBoard" variable from the item in HTML w/ID of "board"
+function renderGameBoard() {
+
   const htmlBoard = document.getElementById('board');
 
-  // TODO: add comment for this code
-  const top = document.createElement("tr"); //Creates top section of board where user clicks to insert game piece
+  //Creates top section of board where user clicks to insert game piece
+  renderTopOfGameBoard(htmlBoard);
+
+  //Build rest of game of game board
+  renderBodyOfGameBoard(htmlBoard);
+}
+
+/** renderTopOfGameBoard: builds top section of board where user clicks to insert game piece*/
+function renderTopOfGameBoard(board) {
+  const top = document.createElement("tr");
+
   top.setAttribute("id", "column-top");
   top.addEventListener("click", handleClick); //Event listener when user clicks
 
@@ -47,24 +55,25 @@ function makeHtmlBoard() {
     headCell.setAttribute("id", x);
     top.append(headCell);
   }
-  htmlBoard.append(top); //Append top portion to htmlBoard
+  board.append(top); //Append top portion to htmlBoard
+}
 
-  // TODO: add comment for this code
-  for (var y = 0; y < HEIGHT; y++) { //Add rest of game of game board
+/** renderBodyOfGameBoard: builds body section of game board where pieces display*/
+function renderBodyOfGameBoard(board) {
+  for (var y = 0; y < HEIGHT; y++) {
     const row = document.createElement("tr");
     for (var x = 0; x < WIDTH; x++) {
       const cell = document.createElement("td");
       cell.setAttribute("id", `${y}-${x}`);
       row.append(cell);
     }
-    htmlBoard.append(row);
+    board.append(row);
   }
 }
 
 /** findSpotForCol: given column x, return top empty y (null if filled) */
 
 function findSpotForCol(x) {
-  // TODO: write the real version of this, rather than always returning 0
   for (let y = HEIGHT - 1; y >= 0; y--) { //y = HEIGHT - 1
     if (!board[y][x]) {
       return y; //return y if it's not filled
@@ -76,7 +85,6 @@ function findSpotForCol(x) {
 /** placeInTable: update DOM to place piece into HTML table of board */
 
 function placeInTable(y, x) {
-  // TODO: make a div and insert into correct table cell
   const tableCell = document.getElementById(`${y}-${x}`);
   const piece = document.createElement('div');
   piece.classList.add('piece', `p${currPlayer}`);
@@ -87,7 +95,6 @@ function placeInTable(y, x) {
 /** endGame: announce game end */
 
 function endGame(msg) {
-  // TODO: pop up alert message
   alert(msg)
 }
 
@@ -104,23 +111,21 @@ function handleClick(evt) {
   }
 
   // place piece in board and add to HTML table
-  // TODO: add line to update in-memory board
   board[y][x] = currPlayer;
   placeInTable(y, x);
 
+  /** check game conditions to see if game is over */
   // check for win
   if (checkForWin()) {
     return endGame(`Player ${currPlayer} won!`);
   }
 
   // check for tie
-  // TODO: check if all cells in board are filled; if so call, call endGame
   if (board.every(row => row.every(cell => cell))) {
     return endGame('Tie!');
   }
 
-  // switch players
-  // TODO: switch currPlayer 1 <-> 2
+  // switch players when turn is over
   currPlayer === 1 ? currPlayer = 2 : currPlayer = 1;
 }
 
@@ -141,8 +146,6 @@ function checkForWin() {
       board[y][x] === currPlayer
     );
   }
-
-  // TODO: read and understand this code. Add comments to help you.
 
   for (var y = 0; y < HEIGHT; y++) {
     for (var x = 0; x < WIDTH; x++) {
@@ -178,5 +181,5 @@ function checkForWin() {
   }
 }
 
-makeBoard();
-makeHtmlBoard();
+gameBoard();
+renderGameBoard();
