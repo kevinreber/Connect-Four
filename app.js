@@ -181,5 +181,8 @@ function checkForWin() {
   }
 }
 
+/** Restart Game  */
+document.getElementById("restart").addEventListener("click", () => window.location.reload())
+
 gameBoard();
 renderGameBoard();
